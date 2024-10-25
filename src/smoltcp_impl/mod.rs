@@ -150,12 +150,14 @@ impl<'a> SocketSetWrapper<'a> {
     pub fn poll_interfaces(&self) {
         let timestamp =
             Instant::from_micros_const((current_time_nanos() / NANOS_PER_MICROS) as i64);
+/*
         #[cfg(feature = "monolithic")]
         LOOPBACK.lock().poll(
             timestamp,
             LOOPBACK_DEV.lock().deref_mut(),
             &mut self.0.lock(),
         );
+*/
 
         ETH0.poll(&self.0);
     }
@@ -352,14 +354,18 @@ pub fn bench_receive() {
 /// Add multicast_addr to the loopback device.
 pub fn add_membership(multicast_addr: IpAddress, _interface_addr: IpAddress) {
     let timestamp = Instant::from_micros_const((current_time_nanos() / NANOS_PER_MICROS) as i64);
+error!("No loopback device");
+/*
     let _ = LOOPBACK.lock().join_multicast_group(
         LOOPBACK_DEV.lock().deref_mut(),
         multicast_addr,
         timestamp,
     );
+*/
 }
 
 pub(crate) fn init(_net_dev: AxNetDevice) {
+/*
     let mut device = LoopbackDev::new(Medium::Ip);
     let config = Config::new(smoltcp::wire::HardwareAddress::Ip);
 
@@ -375,6 +381,7 @@ pub(crate) fn init(_net_dev: AxNetDevice) {
     });
     LOOPBACK.init_by(Mutex::new(iface));
     LOOPBACK_DEV.init_by(Mutex::new(device));
+*/
 
     let ether_addr = EthernetAddress(_net_dev.mac_address().0);
     let eth0 = InterfaceWrapper::new("eth0", _net_dev, ether_addr);
